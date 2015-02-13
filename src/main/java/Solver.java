@@ -1,10 +1,35 @@
 import com.joptimizer.optimizers.LPOptimizationRequest;
+import com.joptimizer.optimizers.LPPrimalDualMethod;
 
 
 public class Solver {
 	
 	public Solution findRelaxedSolution (Data instance){
-		return null;
+		// instancier la solution de départ 
+		Solution relaxedSolution = new Solution (instance);
+		// construct the linear program
+		LPOptimizationRequest LP = makeRelaxedLinearProgram(instance);
+		// instancier un optimizer 
+		LPPrimalDualMethod optimizer = new LPPrimalDualMethod();
+		// associate the ptimizer to the problem instance (linear program)
+		optimizer.setLPOptimizationRequest(LP);
+		try {
+			int returnCode = optimizer.optimize();
+			double[] sol = optimizer.getOptimizationResponse().getSolution();
+			// copy the optimizer solution  
+			int i = 0;
+			for (int row = 0; row< instance.vacationListPerType.length; row++){
+				for (int col = 0; col < instance.vacationListPerType[row].length; col++){
+					relaxedSolution.setNumberOfVacationPerType(sol[i++], row, col);
+				}
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Problem encountered when trying to solve the stuff");
+			e.printStackTrace();
+		}
+		
+		return relaxedSolution;
 	}
 	
 	

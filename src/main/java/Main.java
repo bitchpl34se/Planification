@@ -1,22 +1,29 @@
+import org.apache.log4j.BasicConfigurator;
+
 
 public class Main
 {
 	public static void main(final String[] parameters)
 	{
+		BasicConfigurator.configure();
 		final String path = (parameters.length > 0) ? parameters[0] : "data_windows_utf8.csv";
 		final Data data = Reader.read(path);
 		
-		//Solver sol = new Solver();
-		//sol.makeRelaxedLinearProgram(data);
+		Solver solver = new Solver();
+		Solution approximateSolution = solver.findRelaxedSolution(data);
 		
-		if(data == null)
+		visualizeSolution(approximateSolution);
+		
+		System.out.println (" current cost is : " +approximateSolution.computeCost());
+		
+		/*if(data == null)
 		{
 			System.out.println("Error while parsing file \"" + path + "\"");
 		}
 		else
 		{
 			visualizeAllVacations(data);
-		}
+		}*/
 	}
 	
 	public static void visualizeAllVacations(Data data)
@@ -24,7 +31,6 @@ public class Main
 		System.out.println("Charge : " + data.charge.getNumberOfPeriods() + " periods");
 		for(int period = 0; period < data.charge.getNumberOfPeriods(); ++period)
 		{
-			//System.out.print("\t" + data.charge.get(period));
 			if(data.charge.get(period) < 10)
 			{
 				System.out.print(data.charge.get(period) + "   ");
@@ -79,9 +85,26 @@ public class Main
 		}
 	}
 	
-	public static void visualizeSolution(Data data)
+	public static void visualizeSolution(Solution solution)
 	{
-		for(int period = 0; period <= data.charge.getNumberOfPeriods(); ++period)
+		System.out.println("Charge : " + solution.instance.charge.getNumberOfPeriods() + " periods");
+		for(int period = 0; period < solution.instance.charge.getNumberOfPeriods(); ++period)
+		{
+			if(solution.instance.charge.get(period) < 10)
+			{
+				System.out.print(solution.instance.charge.get(period) + "   ");
+			}
+			else if(solution.instance.charge.get(period) < 100)
+			{
+				System.out.print(solution.instance.charge.get(period) + "  ");
+			}
+			else if(solution.instance.charge.get(period) < 1000)
+			{
+				System.out.print(solution.instance.charge.get(period) + " ");
+			}
+		}
+		System.out.println();
+		for(int period = 0; period <= solution.instance.charge.getNumberOfPeriods(); ++period)
 		{
 			if(period < 10)
 			{
@@ -98,6 +121,18 @@ public class Main
 		}
 		System.out.println();
 		
-		// créer partie où l'on affiche les vacations solutions
+		for (int i=0; i<solution.numberOfTypes; i++){
+			System.out.println("vacation type "+ i +":");
+			for (int j = 0; j <  solution.numberOfVacationPerType[i].length; j++){
+				double sol = solution.numberOfVacationPerType[i][j];
+				if ((int)sol > 0){
+					for(int k = ((10*(sol-(int)sol)>=1) ? (int) Math.ceil(sol) : (int) sol); k > 0; k--){
+						System.out.println(solution.instance.vacationListPerType[i][j].visualizeVacation(solution.instance.charge.getNumberOfPeriods()));
+					}
+				}
+			}
+			System.out.println();
+		}
 	}
 }
+
