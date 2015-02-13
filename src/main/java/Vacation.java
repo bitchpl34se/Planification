@@ -52,7 +52,7 @@ public class Vacation
 			}
 		}
 		result += "|   ";
-		for(int period = stop+2; period <= nbPeriods; period++)
+		for(int period = stop+2; period <= nbPeriods+1; period++)
 		{
 			result += "    ";
 		}
