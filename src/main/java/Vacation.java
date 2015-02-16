@@ -22,7 +22,7 @@ public class Vacation
 	}
 
 	public boolean isWorkedAt (int t){
-		return ((start <= t) && (t < breakStart)) || ((breakStart <= t) && (t < breakStop));
+		return ((start <= t) && (t < breakStart)) || ((breakStop <= t) && (t < stop));
 	}
 	
 	public boolean check()

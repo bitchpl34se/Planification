@@ -10,8 +10,13 @@ public class Main
 		
 		Solver solver = new Solver();
 		Solution approximateSolution = solver.findRelaxedSolution(data);
+		Writer write = new Writer(approximateSolution);
+		write.writeVisualisationVacations("solution.txt");
+		write.writePossibleVacations("vacationsPossibles.txt");
+		write.writeVisualisationCharge("charge.csv");
 		
-		approximateSolution.visualizeSolution(approximateSolution);
+		approximateSolution.visualizeAllVacations();
+		approximateSolution.visualizeSolution();
 		
 		System.out.println (" current cost is : " +approximateSolution.computeCost());
 		
@@ -21,7 +26,7 @@ public class Main
 		}
 		else
 		{
-			approximateSolution.visualizeAllVacations(data);
+			approximateSolution.visualizeAllVacations();
 		}*/
 	}
 }
