@@ -29,6 +29,7 @@ public class Writer {
 			fw.write("\r\n");
 			for(int typeIndex = 0; typeIndex < sol.instance.vacationTypeList.length; ++typeIndex)
 			{
+				// écriture des informations relatives au type de vacation
 				VacationType vacationType = sol.instance.vacationTypeList[typeIndex];
 				fw.write("Vacation " + (typeIndex + 1) + " : ");
 				fw.write(vacationType.rangeMin + ", ");
@@ -43,6 +44,8 @@ public class Writer {
 				fw.write(vacationType.cost + " ; ");
 				fw.write(Integer.toString(sol.instance.vacationListPerType[typeIndex].length)); 
 				fw.write("\r\n");
+				
+				// ligne des périodes
 				for(int period = 1; period <= sol.instance.charge.getNumberOfPeriods(); ++period)
 				{
 					if(period < 10)
@@ -59,6 +62,11 @@ public class Writer {
 					}
 				}
 				fw.write("\r\n");
+				
+				// écriture des vacations possibles pour ce type avec le format suivant :
+				// |---|---|~~~|---|---|
+				// |---| correspond à une période travaillée
+				// |~~~| correspond à une période de pause
 				for(int vacationIndex = 0; vacationIndex < sol.instance.vacationListPerType[typeIndex].length; ++vacationIndex)
 				{
 					Vacation vacation = sol.instance.vacationListPerType[typeIndex][vacationIndex];
@@ -98,6 +106,7 @@ public class Writer {
 			output.createNewFile();
 		    fw = new FileWriter (output);
 		 
+		    // ligne des périodes
 			for(int period = 1; period <= sol.instance.charge.getNumberOfPeriods(); ++period)
 			{
 				if(period < 10)
@@ -115,6 +124,7 @@ public class Writer {
 			}
 			fw.write("\r\n");
 			
+			// écriture des vacations apparaissant dans la solution
 			for (int i=0; i<sol.numberOfTypes; i++){
 				fw.write("vacation type "+ i +":");
 				fw.write("\r\n");
@@ -144,7 +154,12 @@ public class Writer {
 			}
 		}		
 	}
-	
+
+	/**
+	 * Permet de créer un fichier contenant les valeurs de charge du problème
+	 * ainsi que la charge effectuée dans notre solution
+	 * @param filename le nom du fichier de sortie à créer
+	 */
 	public void writeVisualisationCharge(final String filename)
 	{
 		File output=new File(filename);
@@ -154,8 +169,15 @@ public class Writer {
 		{
 			output.createNewFile();
 		    fw = new FileWriter (output);
-		 
-		    sol.instance.charge.display();
+			
+		    // écriture des valeurs de charges attendues
+			fw.write("Charge :;" + sol.instance.charge.getNumberOfPeriods() + " periods");
+			fw.write("\r\n");
+			for(int period = 0; period < sol.instance.charge.getNumberOfPeriods(); ++period)
+			{
+				fw.write(sol.instance.charge.get(period) + ";");
+			}	
+			fw.write("\r\n");
 			
 			int numberOfPeriods = sol.instance.charge.getNumberOfPeriods();
 			Charge loadSolution = new Charge(numberOfPeriods);
@@ -168,13 +190,14 @@ public class Writer {
 					}
 				loadSolution.set(period, currentPeriodLoad);
 			}
-			
-			fw.write("Charge :;" + sol.instance.charge.getNumberOfPeriods() + " periods");
+			//TODO
+			// écriture des valeurs de charge de la solution
+			/*fw.write("Charge de la solution :;");
 			fw.write("\r\n");
 			for(int period = 0; period < sol.instance.charge.getNumberOfPeriods(); ++period)
 			{
 				fw.write(sol.instance.charge.get(period) + ";");
-			}	
+			}*/
 		}
 		catch (IOException exception)
 		{
